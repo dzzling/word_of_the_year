@@ -1,0 +1,19 @@
+[project]
+name = "sentence_embedding"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Denise Müller", email = "134210655+dzzling@users.noreply.github.com"},
+]
+dependencies = [
+    "sentence-transformers>=2.5.1",
+    "scikit-learn>=1.4.1.post1",
+    "matplotlib>=3.8.3",
+]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
