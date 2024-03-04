@@ -1,11 +1,13 @@
+# %%
+# Imports
+
 from sentence_transformers import SentenceTransformer, util
 from sklearn.manifold import TSNE, MDS
 import matplotlib.pyplot as plt
 import numpy as np
 
-model = SentenceTransformer(
-    "paraphrase-multilingual-MiniLM-L12-v2"
-)  # multi-language model
+# %%
+# Get data
 
 sentences = [
     """The term refers to the strong determination and slogan adopted by the Hanshin Tigers baseball team, symbolizing their commitment to achieving victory, as highlighted by their coach's words and the team's performance during the season, ultimately leading to their long-awaited championship win after 38 years.""",
@@ -45,28 +47,47 @@ words = [
     "inteligencia artificial",
 ]
 
+# %%
+# Setup model
+
+model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+
 embedding = model.encode(sentences, convert_to_tensor=False)
-# (6, 384)
+
+# %%
+# Compress data
+
+embedded_mds_data = MDS(n_components=2).fit_transform(embedding)
+embedded_tsne_data = TSNE(n_components=2, perplexity=5).fit_transform(embedding)
 
 
-# mds = MDS(n_components=2)
-# embedded_data = mds.fit_transform(embedding)
+# %%
+# Plot the results in regular scatter plot
 
+plt.scatter(embedded_tsne_data[:, 0], embedded_tsne_data[:, 1])
+plt.title("Relation between global words of the year")
 
-embedded_data = TSNE(n_components=2, perplexity=5).fit_transform(embedding)
-
-# Plot the results
-""" plt.scatter(embedded_data[:, 0], embedded_data[:, 1])
-plt.title("t-SNE Visualization")
-plt.xlabel("Dimension 1")
-plt.ylabel("Dimension 2")
-
-for i, val in enumerate(embedded_data):
+for i, val in enumerate(embedded_tsne_data):
     plt.annotate(words[i], (val[0], val[1]))
 
-plt.show() """
+plt.show()
 
+# %%
+# Calculate cosine scores
 cosine_scores = util.cos_sim(embedding, embedding)
+
+d = {}
+for i, v1 in enumerate(words):
+    for j, v2 in enumerate(words):
+        if i >= j:
+            continue
+        d[v1 + " vs. " + v2] = cosine_scores[i][j].item()
+
+d_sorted = dict(sorted(d.items(), key=lambda x: x[1], reverse=True))
+print(d_sorted)
+
+# %%
+# Plot the cosine scores in heatmap
 
 fig, ax = plt.subplots()
 im = ax.imshow(cosine_scores)
@@ -87,17 +108,7 @@ for i in range(len(words)):
             color="w",
         )
 
-ax.set_title("Relation of word of the years")
-# plt.show()
+ax.set_title("Similarity between the words of the year")
+plt.show()
 
-
-d = {}
-for i, v1 in enumerate(words):
-    for j, v2 in enumerate(words):
-        if i >= j:
-            continue
-        d[v1 + " vs. " + v2] = cosine_scores[i][j].item()
-
-# sort by score
-d_sorted = dict(sorted(d.items(), key=lambda x: x[1], reverse=True))
-print(d_sorted)
+# %%
