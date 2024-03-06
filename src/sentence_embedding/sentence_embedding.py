@@ -6,6 +6,7 @@ from sklearn.manifold import TSNE, MDS
 import matplotlib.pyplot as plt
 import numpy as np
 import polars as pl
+import altair as alt
 
 # %%
 # Get data
@@ -17,6 +18,9 @@ sentences = [row[1] for row in df.iter_rows()]
 filename = "../../wordlists/00_all_wordlists.csv"
 df = pl.read_csv(filename)
 words = [row[1] for row in df.iter_rows()]
+
+words_dataframe = pl.DataFrame(words)
+print(words_dataframe)
 
 # %%
 # Setup model
@@ -30,18 +34,33 @@ embedding = model.encode(sentences, convert_to_tensor=False)
 
 embedded_mds_data = MDS(n_components=2).fit_transform(embedding)
 embedded_tsne_data = TSNE(n_components=2, perplexity=5).fit_transform(embedding)
+embedded_tsne_data_polars = (
+    TSNE(n_components=2, perplexity=5)
+    .set_output(transform="polars")
+    .fit_transform(embedding)
+)
+print(embedded_tsne_data_polars)
 
 
 # %%
-# Plot the results in regular scatter plot
+# Plot the results with altair
 
-plt.scatter(embedded_tsne_data[:, 0], embedded_tsne_data[:, 1])
-plt.title("Relation between global words of the year")
+complete_df = pl.concat([embedded_tsne_data_polars, words_dataframe], how="horizontal")
+print(complete_df)
 
-for i, val in enumerate(embedded_tsne_data):
-    plt.annotate(words[i], (val[0], val[1]))
-
-plt.show()
+# TODO: Change color (with legend) to translation
+title = alt.TitleParams("Relation between global words of the year", anchor="middle")
+plot = (
+    alt.Chart(complete_df, title=title)
+    .mark_point()
+    .encode(
+        x=alt.X("tsne0", axis=alt.Axis(labels=False), title=None),
+        y=alt.Y("tsne1", axis=alt.Axis(labels=False), title=None),
+        color=alt.Color("column_0", legend=None),
+    )
+)
+text = plot.mark_text(dy=15).encode(text="column_0")
+plot + text
 
 # %%
 # Calculate cosine scores
@@ -83,3 +102,4 @@ ax.set_title("Similarity between the words of the year")
 plt.show()
 
 # %%
+# Plot the cosine scores in heatmap with altair
