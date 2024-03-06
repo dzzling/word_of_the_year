@@ -6,13 +6,15 @@ authors = [
     {name = "Denise Müller", email = "134210655+dzzling@users.noreply.github.com"},
 ]
 dependencies = [
-    "sentence-transformers>=2.5.1",
     "scikit-learn>=1.4.1.post1",
     "matplotlib>=3.8.3",
     "ipykernel>=6.29.3",
     "polars>=0.20.13",
     "altair>=5.2.0",
     "pyarrow>=15.0.0",
+    "sentence-transformers>=2.5.1",
+    "keras-preprocessing>=1.1.2",
+    "gensim>=4.3.2",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
