@@ -74,32 +74,22 @@ for i, v1 in enumerate(words):
         d[v1 + " vs. " + v2] = cosine_scores[i][j].item()
 
 d_sorted = dict(sorted(d.items(), key=lambda x: x[1], reverse=True))
-print(d_sorted)
 
-# %%
-# Plot the cosine scores in heatmap
-
-fig, ax = plt.subplots()
-im = ax.imshow(cosine_scores)
-ax.set_xticks(np.arange(len(words)), labels=words)
-ax.set_yticks(np.arange(len(words)), labels=words)
-
-plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
-
-# Loop over data dimensions and create text annotations.
-for i in range(len(words)):
-    for j in range(len(words)):
-        text = ax.text(
-            j,
-            i,
-            (cosine_scores[i, j].item() * 100) // 1,
-            ha="center",
-            va="center",
-            color="w",
-        )
-
-ax.set_title("Similarity between the words of the year")
-plt.show()
 
 # %%
 # Plot the cosine scores in heatmap with altair
+
+x, y = np.meshgrid(words, words)
+z = list(reversed(np.ravel(cosine_scores.tolist())))
+
+source = pl.DataFrame({"x": x.ravel(), "y": y.ravel(), "z": z})
+
+title = alt.TitleParams("Similarity between the words of the year", anchor="middle")
+alt.Chart(source, title=title).mark_rect().encode(
+    x=alt.X("x:O", title=None),
+    y=alt.Y("y:O", title=None),
+    color="z:Q",
+)
+
+
+# %%
