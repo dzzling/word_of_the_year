@@ -2,7 +2,7 @@
 
 import torch
 from transformers import AutoTokenizer, AutoModel
-from sklearn.manifold import TSNE, MDS
+from sklearn.manifold import TSNE
 import polars as pl
 import numpy as np
 import altair as alt

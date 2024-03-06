@@ -3,7 +3,6 @@
 
 from sentence_transformers import SentenceTransformer, util
 from sklearn.manifold import TSNE, MDS
-import matplotlib.pyplot as plt
 import numpy as np
 import polars as pl
 import altair as alt
