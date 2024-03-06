@@ -5,47 +5,18 @@ from sentence_transformers import SentenceTransformer, util
 from sklearn.manifold import TSNE, MDS
 import matplotlib.pyplot as plt
 import numpy as np
+import polars as pl
 
 # %%
 # Get data
 
-sentences = [
-    """The term refers to the strong determination and slogan adopted by the Hanshin Tigers baseball team, symbolizing their commitment to achieving victory, as highlighted by their coach's words and the team's performance during the season, ultimately leading to their long-awaited championship win after 38 years.""",
-    """The term refers to an advanced artificial intelligence language model developed by OpenAI, which gained significant attention and recognition in Denmark during the year 2023 for its innovative capabilities in natural language processing and conversation generation.""",
-    """The term means "AI-generated" in Norwegian, signifying the increasing use and impact of artificial intelligence-generated content and technology in various aspects of society.""",
-    """Throughout the year 2023, schoolteachers organised several strikes and demonstrations demanding solutions to problems related to their career progression, working conditions and salaries.""",
-    """The term "Krisenmodus" refers to crisis mode and signifies the state of heightened alertness and response mechanisms activated in Germany in the face of various challenges or crises, such as the conflict between ukraine and russia or israel and gaza, the COVID-19 pandemic or economic downturns""",
-    """The term means "artificial intelligence" in Russian and its significance reflects the growing interest and development in AI technologies within Russia, impacting various sectors from technology to healthcare.""",
-    """The term means "mobilization", reflecting the country's focus on mobilizing resources and efforts, particularly in response to the conflict between Russia and Ukraine""",
-    """The word "polarization" has been chosen due to its widespread presence in the media and its evolving significance, referring to situations with two distinctly defined and distant opinions or activities, often implying tension and confrontation.""",
-    """The term refers to professional baseball player Seiya Murakami, particularly highlighting his exceptional performance during the season and his status as a baseball deity or hero among fans due to his record-breaking achievements and impactful playing style.""",
-    """The term refers to the capital city of Ukraine and gained prominence in Denmark during 2022 due to its association with geopolitical events, particularly the conflict between Ukraine and Russia.""",
-    """The term refers to the phenomenon of shrinkflation, where the size or quantity of a product decreases while its price remains the same or increases, reflecting consumer concerns about inflation and product value.""",
-    """The Russian invasion of Ukraine in February 2022 gave start to the largest military conflict in Europe since the end of the Second World War; the resulting humanitarian and economic crises, with the compression of the energy and raw materials markets, extended its impact to the whole world.""",
-    """The term signifies a pivotal shift or turning point, particularly emphasized by Chancellor Scholz in relation to the Ukrainian conflict, reflecting a significant change or transformation""",
-    """The word means "war," and its significance in 2022 reflects the heightened tensions and conflicts due to the war with Ukraine, both domestically and internationally, that shaped Russia's political discourse and actions throughout the year.""",
-    """The phrase translates to "Russian military ship, go f*** yourself" and gained significance in 2022 as an expression of defiance and resistance against Russian aggression, particularly during the ongoing conflict between Ukraine and Russia.""",
-    """The term refers to artificial intelligence, representing the increasing prominence of AI technologies and their impact on various aspects of society, including innovation, automation, and ethical considerations.""",
-]
+filename = "../../word_meanings/00_word_meanings_2.csv"
+df = pl.read_csv(filename)
+sentences = [row[1] for row in df.iter_rows()]
 
-words = [
-    """アレ" (ARE)""",
-    "ChatGPT",
-    "KI-generert",
-    "professor",
-    "Krisenmodus",
-    "искусственный интеллект",
-    "мобілізація",
-    "polarization",
-    """村神様""",
-    "Kyiv",
-    "krympflasjon",
-    "guerra",
-    "Zeitenwende",
-    "война",
-    "русский военный корабль, иди на хуй",
-    "inteligencia artificial",
-]
+filename = "../../wordlists/00_all_wordlists.csv"
+df = pl.read_csv(filename)
+words = [row[1] for row in df.iter_rows()]
 
 # %%
 # Setup model
