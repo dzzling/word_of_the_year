@@ -1,5 +1,5 @@
 # %%
-
+# Imports
 import torch
 from transformers import AutoTokenizer, AutoModel
 from sklearn.manifold import TSNE
@@ -13,6 +13,8 @@ model = AutoModel.from_pretrained("bert-base-uncased")
 
 # %%
 # get the word embedding from BERT
+
+
 def get_word_embedding(word: str):
     input_ids = torch.tensor(tokenizer.encode(word)).unsqueeze(0)
     outputs = model(input_ids)
@@ -25,12 +27,21 @@ def get_word_embedding(word: str):
 
 
 # %%
+# Get data
+
 filename = "../../wordlists/00_all_wordlists.csv"
 df = pl.read_csv(filename)
 words = [row[1] for row in df.iter_rows()]
 words_dataframe = pl.DataFrame({"words": words})
 
+filename = "../../wordlists/00_translations.csv"
+df = pl.read_csv(filename)
+word_translations = [row[1] for row in df.iter_rows()]
+translations_dataframe = pl.DataFrame({"Translations": word_translations})
+
 # %%
+# Compress dimensions
+
 embedding = []
 for word in words:
     embedding.append(get_word_embedding(word).tolist())
@@ -46,7 +57,10 @@ embedded_tsne_data_polars = (
 # %%
 # Plot the results with altair
 
-complete_df = pl.concat([embedded_tsne_data_polars, words_dataframe], how="horizontal")
+complete_df = pl.concat(
+    [embedded_tsne_data_polars, words_dataframe, translations_dataframe],
+    how="horizontal",
+)
 
 # TODO: Change color (with legend) to translation
 title = alt.TitleParams("Relation between global words of the year", anchor="middle")
@@ -56,7 +70,7 @@ plot = (
     .encode(
         x=alt.X("tsne0", axis=alt.Axis(labels=False), title=None),
         y=alt.Y("tsne1", axis=alt.Axis(labels=False), title=None),
-        color=alt.Color("words", legend=None),
+        color=alt.Color("Translations"),
     )
 )
 text = plot.mark_text(dy=15).encode(text="words")

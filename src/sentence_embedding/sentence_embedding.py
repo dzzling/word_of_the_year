@@ -18,8 +18,12 @@ filename = "../../wordlists/00_all_wordlists.csv"
 df = pl.read_csv(filename)
 words = [row[1] for row in df.iter_rows()]
 
-words_dataframe = pl.DataFrame(words)
-print(words_dataframe)
+filename = "../../wordlists/00_translations.csv"
+df = pl.read_csv(filename)
+word_translations = [row[1] for row in df.iter_rows()]
+
+words_dataframe = pl.DataFrame({"Words": words})
+translations_dataframe = pl.DataFrame({"Translations": word_translations})
 
 # %%
 # Setup model
@@ -38,14 +42,15 @@ embedded_tsne_data_polars = (
     .set_output(transform="polars")
     .fit_transform(embedding)
 )
-print(embedded_tsne_data_polars)
 
 
 # %%
 # Plot the results with altair
 
-complete_df = pl.concat([embedded_tsne_data_polars, words_dataframe], how="horizontal")
-print(complete_df)
+complete_df = pl.concat(
+    [embedded_tsne_data_polars, words_dataframe, translations_dataframe],
+    how="horizontal",
+)
 
 # TODO: Change color (with legend) to translation
 title = alt.TitleParams("Relation between global words of the year", anchor="middle")
@@ -55,10 +60,10 @@ plot = (
     .encode(
         x=alt.X("tsne0", axis=alt.Axis(labels=False), title=None),
         y=alt.Y("tsne1", axis=alt.Axis(labels=False), title=None),
-        color=alt.Color("column_0", legend=None),
+        color=alt.Color("Translations"),
     )
 )
-text = plot.mark_text(dy=15).encode(text="column_0")
+text = plot.mark_text(dy=15).encode(text="Words")
 plot + text
 
 # %%
@@ -74,12 +79,11 @@ for i, v1 in enumerate(words):
 
 d_sorted = dict(sorted(d.items(), key=lambda x: x[1], reverse=True))
 
-
 # %%
 # Plot the cosine scores in heatmap with altair
 
 x, y = np.meshgrid(words, words)
-z = list(reversed(np.ravel(cosine_scores.tolist())))
+z = np.ravel(cosine_scores.tolist())
 
 source = pl.DataFrame({"x": x.ravel(), "y": y.ravel(), "z": z})
 
