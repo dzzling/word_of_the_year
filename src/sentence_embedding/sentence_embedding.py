@@ -52,7 +52,6 @@ complete_df = pl.concat(
     how="horizontal",
 )
 
-# TODO: Change color (with legend) to translation
 title = alt.TitleParams("Relation between global words of the year", anchor="middle")
 plot = (
     alt.Chart(complete_df, title=title)

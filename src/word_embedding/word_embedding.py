@@ -6,6 +6,7 @@ from sklearn.manifold import TSNE
 import polars as pl
 import numpy as np
 import altair as alt
+from sklearn.metrics.pairwise import cosine_similarity
 
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 model = AutoModel.from_pretrained("bert-base-uncased")
@@ -62,18 +63,32 @@ complete_df = pl.concat(
     how="horizontal",
 )
 
-# TODO: Change color (with legend) to translation
 title = alt.TitleParams("Relation between global words of the year", anchor="middle")
 plot = (
     alt.Chart(complete_df, title=title)
     .mark_point()
     .encode(
-        x=alt.X("tsne0", axis=alt.Axis(labels=False), title=None),
-        y=alt.Y("tsne1", axis=alt.Axis(labels=False), title=None),
-        color=alt.Color("Translations"),
+        x=alt.X("tsne0", axis=alt.Axis(labels=False), title=None).scale(
+            domain=(-200, 250)
+        ),
+        y=alt.Y("tsne1", axis=alt.Axis(labels=False), title=None).scale(
+            domain=(-100, 80)
+        ),
+        color=alt.Color("Translations").scale(scheme="tableau20"),
     )
 )
 text = plot.mark_text(dy=15).encode(text="words")
 plot + text
 
+# %%
+# Calculate cosine scores
+d = {}
+for i, v1 in enumerate(words):
+    for j, v2 in enumerate(words):
+        if i >= j:
+            continue
+        d[v1 + " vs. " + v2] = cosine_similarity([embedding[i]], [embedding[j]])[0][0]
+
+d_sorted = dict(sorted(d.items(), key=lambda x: x[1], reverse=True))
+print(d_sorted)
 # %%
