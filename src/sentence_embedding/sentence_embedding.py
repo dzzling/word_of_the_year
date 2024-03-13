@@ -57,13 +57,19 @@ plot = (
     alt.Chart(complete_df, title=title)
     .mark_point()
     .encode(
-        x=alt.X("tsne0", axis=alt.Axis(labels=False), title=None),
-        y=alt.Y("tsne1", axis=alt.Axis(labels=False), title=None),
+        x=alt.X("tsne0", axis=alt.Axis(labels=False), title=None).scale(
+            domain=(-60, 30)
+        ),
+        y=alt.Y("tsne1", axis=alt.Axis(labels=False), title=None).scale(
+            domain=(-60, 70)
+        ),
         color=alt.Color("Translations"),
     )
 )
 text = plot.mark_text(dy=15).encode(text="Words")
-plot + text
+chart = plot + text
+chart
+# chart.save("../../tests/plot_2.json")
 
 # %%
 # Calculate cosine scores
@@ -87,11 +93,16 @@ z = np.ravel(cosine_scores.tolist())
 source = pl.DataFrame({"x": x.ravel(), "y": y.ravel(), "z": z})
 
 title = alt.TitleParams("Similarity between the words of the year", anchor="middle")
-alt.Chart(source, title=title).mark_rect().encode(
-    x=alt.X("x:O", title=None),
-    y=alt.Y("y:O", title=None),
-    color="z:Q",
+chart = (
+    alt.Chart(source, title=title)
+    .mark_rect()
+    .encode(
+        x=alt.X("x:O", title=None),
+        y=alt.Y("y:O", title=None),
+        color="z:Q",
+    )
 )
-
+chart
+# chart.save("../../tests/heatmap_2.json")
 
 # %%
