@@ -99,10 +99,10 @@ chart = (
     .encode(
         x=alt.X("x:O", title=None),
         y=alt.Y("y:O", title=None),
-        color="z:Q",
+        color=alt.Color("z:Q").scale(scheme="yelloworangebrown"),
     )
 )
 chart
-# chart.save("../../tests/heatmap_2.json")
+# chart.save("../../results/heatmap_2.json")
 
 # %%
