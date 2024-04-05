@@ -69,7 +69,7 @@ plot = (
     .mark_point()
     .encode(
         x=alt.X("tsne0", axis=alt.Axis(labels=False), title=None).scale(
-            domain=(-200, 250)
+            domain=(-80, 100)
         ),
         y=alt.Y("tsne1", axis=alt.Axis(labels=False), title=None).scale(
             domain=(-100, 80)
@@ -78,8 +78,8 @@ plot = (
     )
 )
 text = plot.mark_text(dy=15).encode(text="words")
-plot + text
-
+chart = plot + text
+chart.save("../../results/bert.json")
 # %%
 # Calculate cosine scores
 d = {}
