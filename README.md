@@ -1,7 +1,12 @@
 # Word of the year :sparkles:
 
-## About
-A "Word of the Year" is a special word some countrys choose each year reflecting important events concerning the country's population in the past months. While some words might be a scientific term like "COVID-19", others might be contemporary slang or neologisms containing more nuanced meaning.   
-This project was created to analyse the semantic similarities between the different words all the countrys with available word databases chose from 2014 to 2024. In order to compare the words, I used the corresponding word embedding from pre-trained llms.
+This serves as the foundational material for a [blogpost](https://denisemueller.eu/wordoftheyear.html).
 
-Besides the interest for the relation of the words of the year, this project serves predominantly the mean to learn and understand word embeddings. The project reflects learning stages, which were commented and summarized in a [blogpost](https://denisemueller.eu/wordoftheyear.html). Check it out, if you're interested in a more guided approach to this repository!
+## About the "Word of the Year"
+The "Word of the Year" is a significant term selected annually by certain countries, reflecting pivotal events or societal trends that have shaped the populace in recent months. Ranging from scientific terms like "COVID-19" to contemporary slang or emerging neologisms, each word encapsulates nuanced meanings.
+
+# Goal of the project
+This project endeavors to examine the semantic correlations among the various "Words of the Year" chosen by countries with accessible word databases from 2014 to 2024. Beyond the curiosity surrounding these selected words, the primary aim is to delve into the realm of word embeddings for enhanced comprehension. The project documents learning milestones, elucidated and summarized in a corresponding [blogpost](https://denisemueller.eu/wordoftheyear.html). Feel free to check it out for a guided journey through this repository!
+
+# Method 
+To facilitate comparative analysis, I extracted corresponding word embeddings for each term from pre-trained language models. Exploring various methodologies, my focus initially centered on GloVe, later transitioning to Bert. Additionally, I refined input data, progressing from minimalist datasets to more comprehensive ones. Subsequently, leveraging sense-making word embeddings, I employed 'Altair' for visualizing the findings.
